@@ -18,6 +18,20 @@ const GAMES = [
     desc: "Aku pikirin angka 1-100, coba tebak!",
     color: "#a78bfa",
   },
+  {
+    id: "tictactoe",
+    emoji: "🎯",
+    title: "Tic Tac Toe",
+    desc: "Main tic-tac-toe lawan bot pintar!",
+    color: "#ff9a56",
+  },
+  {
+    id: "memory",
+    emoji: "🧠",
+    title: "Memory Card",
+    desc: "Temukan pasangan emoji yang sama!",
+    color: "#60a5fa",
+  },
 ];
 
 export default function GamesPage() {
