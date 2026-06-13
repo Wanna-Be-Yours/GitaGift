@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { showModal } from "@/components/Modal";
 
 const WIN_PATTERNS = [
@@ -20,7 +20,6 @@ function checkWinner(board) {
 }
 
 function botMove(board) {
-  // Cek bisa menang
   for (let i = 0; i < 9; i++) {
     if (!board[i]) {
       const test = [...board];
@@ -28,7 +27,6 @@ function botMove(board) {
       if (checkWinner(test)?.winner === "O") return i;
     }
   }
-  // Blokir player menang
   for (let i = 0; i < 9; i++) {
     if (!board[i]) {
       const test = [...board];
@@ -36,12 +34,9 @@ function botMove(board) {
       if (checkWinner(test)?.winner === "X") return i;
     }
   }
-  // Ambil tengah
   if (!board[4]) return 4;
-  // Ambil sudut
   const corners = [0, 2, 6, 8].filter((i) => !board[i]);
   if (corners.length > 0) return corners[Math.floor(Math.random() * corners.length)];
-  // Sisa
   const empty = board.map((v, i) => (v ? -1 : i)).filter((i) => i >= 0);
   return empty[Math.floor(Math.random() * empty.length)];
 }
@@ -52,11 +47,14 @@ export default function TicTacToe() {
   const [scores, setScores] = useState({ X: 0, O: 0, draw: 0 });
   const [winLine, setWinLine] = useState([]);
   const [gameOver, setGameOver] = useState(false);
+  const processedRef = useRef(false);
 
   const result = checkWinner(board);
 
+  // Detect win/draw — only fire once per game
   useEffect(() => {
-    if (result) {
+    if (result && !processedRef.current) {
+      processedRef.current = true;
       setGameOver(true);
       setWinLine(result.line);
       if (result.winner === "draw") {
@@ -65,8 +63,9 @@ export default function TicTacToe() {
         setScores((s) => ({ ...s, [result.winner]: s[result.winner] + 1 }));
       }
     }
-  }, [result]);
+  }, [board]); // depend on board, not result object
 
+  // Bot turn
   useEffect(() => {
     if (turn === "O" && !gameOver) {
       const timer = setTimeout(() => {
@@ -93,6 +92,7 @@ export default function TicTacToe() {
     setTurn("X");
     setWinLine([]);
     setGameOver(false);
+    processedRef.current = false;
   };
 
   const handleBack = async () => {
