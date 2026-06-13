@@ -20,7 +20,22 @@ export default function LandingPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const [messageIdx] = useState(() => Math.floor(Math.random() * MASSAGES.length));
+  const [messageIdx, setMessageIdx] = useState(0);
+  const [hearts, setHearts] = useState([]);
+
+  useEffect(() => {
+    setMessageIdx(Math.floor(Math.random() * MASSAGES.length));
+    const EMOJIS = ["💕", "🌸", "💗", "✨", "🌺", "💝"];
+    const generated = Array.from({ length: 12 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      duration: `${Math.random() * 6 + 5}s`,
+      delay: `${Math.random() * 5}s`,
+      size: `${Math.random() * 0.8 + 0.8}rem`,
+      emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+    }));
+    setHearts(generated);
+  }, []);
 
   useEffect(() => {
     // Cek kalau udah login, langsung ke menu
@@ -296,18 +311,18 @@ export default function LandingPage() {
 
       {/* Floating hearts */}
       <div className="floating-hearts">
-        {Array.from({ length: 12 }).map((_, i) => (
+        {hearts.map((h) => (
           <span
-            key={i}
+            key={h.id}
             className="floating-heart"
             style={{
-              left: `${Math.random() * 100}%`,
-              animationDuration: `${Math.random() * 6 + 5}s`,
-              animationDelay: `${Math.random() * 5}s`,
-              fontSize: `${Math.random() * 0.8 + 0.8}rem`,
+              left: h.left,
+              animationDuration: h.duration,
+              animationDelay: h.delay,
+              fontSize: h.size,
             }}
           >
-            {["💕", "🌸", "💗", "✨", "🌺", "💝"][Math.floor(Math.random() * 6)]}
+            {h.emoji}
           </span>
         ))}
       </div>
